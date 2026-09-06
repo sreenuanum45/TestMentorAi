@@ -11,6 +11,9 @@ const PROTECTED_PATHS = [
   "/dashboard",
   "/resume-questions",
   "/locator-sandbox",
+  "/profile",
+  "/settings",
+  "/help",
   ...ADMIN_PATHS,
 ];
 
@@ -55,6 +58,9 @@ export const config = {
     "/dashboard/:path*",
     "/resume-questions/:path*",
     "/locator-sandbox/:path*",
+    "/profile/:path*",
+    "/settings/:path*",
+    "/help/:path*",
     "/admin/:path*",
   ],
 };

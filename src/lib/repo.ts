@@ -93,6 +93,11 @@ export async function createUser(
   return user;
 }
 
+export async function updateUserPassword(userId: string, passwordHash: string): Promise<void> {
+  await ensureSchema();
+  await sql`UPDATE users SET password_hash = ${passwordHash} WHERE id = ${userId}`;
+}
+
 export async function listUsersWithMessageCounts(): Promise<
   (UserRow & { message_count: number })[]
 > {

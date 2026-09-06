@@ -17,6 +17,12 @@ const TOOL_LINKS = [
   { href: "/locator-sandbox", label: "Locator Sandbox", icon: "🔍" },
 ];
 
+const ACCOUNT_LINKS = [
+  { href: "/profile", label: "Profile", icon: "👤" },
+  { href: "/settings", label: "Settings", icon: "⚙️" },
+  { href: "/help", label: "Help & Support", icon: "❓" },
+];
+
 function NavLink({
   href,
   label,
@@ -67,7 +73,7 @@ export default function Sidebar({ user }: { user: { email: string; role: Role } 
           <NavLink key={l.href} {...l} active={pathname === l.href} />
         ))}
         {user.role === "ADMIN" && (
-          <NavLink href="/admin" label="Admin" icon="⚙️" active={pathname === "/admin"} />
+          <NavLink href="/admin" label="Admin" icon="🛠️" active={pathname === "/admin"} />
         )}
 
         <div className="mb-1 mt-5 px-3 text-xs font-medium uppercase tracking-wide text-neutral-400">
@@ -77,6 +83,12 @@ export default function Sidebar({ user }: { user: { email: string; role: Role } 
           <NavLink key={l.href} {...l} active={pathname === l.href} />
         ))}
       </nav>
+
+      <div className="mt-4 flex flex-col gap-1 border-t border-neutral-200 pt-3 dark:border-neutral-800">
+        {ACCOUNT_LINKS.map((l) => (
+          <NavLink key={l.href} {...l} active={pathname === l.href} />
+        ))}
+      </div>
 
       <button
         type="button"

@@ -4,6 +4,7 @@ import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import TopBar from "@/components/TopBar";
 import { getCurrentUser } from "@/lib/auth";
+import { listExamsForUser } from "@/lib/repo";
 
 const THEME_INIT_SCRIPT = `
 (function () {
@@ -33,6 +34,12 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const session = await getCurrentUser();
   const user = session ? { email: session.email, role: session.role } : null;
+  const recentExams = session ? await listExamsForUser(session.sub, 3) : [];
+  const notifications = recentExams.map((e) => ({
+    id: e.id,
+    text: `Scored ${e.total > 0 ? Math.round((e.score / e.total) * 100) : 0}% on a ${e.focus} exam`,
+    date: e.created_at,
+  }));
 
   return (
     <html
@@ -48,7 +55,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex bg-background text-foreground">
         {user && <Sidebar user={user} />}
         <div className="flex min-h-full flex-1 flex-col">
-          <TopBar user={user} />
+          <TopBar user={user} notifications={notifications} />
           <main className="flex flex-1 flex-col">{children}</main>
         </div>
       </body>
