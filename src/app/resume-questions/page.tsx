@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import type { ResumeQuestionsResult } from "@/app/api/resume-questions/route";
+import { readFileAsBase64 } from "@/lib/file";
+
+const DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
 const DIFFICULTY_STYLES: Record<string, string> = {
   Junior: "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300",
@@ -15,6 +18,36 @@ export default function ResumeQuestionsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ResumeQuestionsResult | null>(null);
+  const [extracting, setExtracting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setExtracting(true);
+    setError(null);
+    try {
+      const { mimeType, data } = await readFileAsBase64(file);
+      const isPdf = mimeType === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
+      const isDocx = mimeType === DOCX_MIME || file.name.toLowerCase().endsWith(".docx");
+      if (!isPdf && !isDocx) {
+        throw new Error("Only PDF and DOCX files are supported — paste the text instead.");
+      }
+      const res = await fetch("/api/resume-questions/extract", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fileBase64: data, mimeType: isPdf ? "application/pdf" : DOCX_MIME }),
+      });
+      const extracted = await res.json();
+      if (!res.ok) throw new Error(extracted.error || "Failed to read file");
+      setResumeText(extracted.text);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setExtracting(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -47,11 +80,28 @@ export default function ResumeQuestionsPage() {
       </p>
 
       <form onSubmit={handleSubmit} className="mt-6">
+        <div className="mb-2 flex items-center gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            onChange={handleFileChange}
+            className="hidden"
+            id="resume-file-upload"
+          />
+          <label
+            htmlFor="resume-file-upload"
+            className="cursor-pointer rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-1.5 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800"
+          >
+            📎 Upload PDF/DOCX
+          </label>
+          {extracting && <span className="text-sm text-neutral-400">Extracting text…</span>}
+        </div>
         <textarea
           value={resumeText}
           onChange={(e) => setResumeText(e.target.value)}
           rows={8}
-          placeholder="Paste your resume text here…"
+          placeholder="Paste your resume text here, or upload a PDF/DOCX above…"
           className="w-full rounded-lg border border-neutral-300 dark:border-neutral-700 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <button

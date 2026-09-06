@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import MessageBubble from "@/components/MessageBubble";
 import TypingIndicator from "@/components/TypingIndicator";
+import { downloadMockInterviewPdf } from "@/lib/pdf";
 import type { ChatMessage } from "@/types/chat";
 
 type Difficulty = "Friendly" | "Standard" | "Tough";
@@ -13,6 +14,7 @@ interface SetupForm {
   focus: string;
   numQuestions: number;
   difficulty: Difficulty;
+  secondsPerQuestion: number; // 0 = no timer
 }
 
 const ROLE_PRESETS = ["Manual QA", "SDET", "Automation Engineer", "QA Lead"];
@@ -20,6 +22,18 @@ const EXPERIENCE_PRESETS = ["0-2 Years", "3-5 Years", "6+ Years"];
 const FOCUS_PRESETS = ["Manual Testing", "Automation Frameworks", "API Testing", "Performance Testing"];
 const NUM_QUESTIONS_PRESETS = [3, 5, 7, 10];
 const DIFFICULTY_PRESETS: Difficulty[] = ["Friendly", "Standard", "Tough"];
+const TIMER_PRESETS = [
+  { label: "No timer", seconds: 0 },
+  { label: "60s", seconds: 60 },
+  { label: "90s", seconds: 90 },
+  { label: "2 min", seconds: 120 },
+];
+
+function formatTime(totalSeconds: number): string {
+  const m = Math.floor(totalSeconds / 60);
+  const s = totalSeconds % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
 
 function stripMarkdownForSpeech(text: string): string {
   return text
@@ -37,6 +51,7 @@ export default function MockInterviewPage() {
     focus: "Automation Frameworks & API Testing",
     numQuestions: 5,
     difficulty: "Standard",
+    secondsPerQuestion: 0,
   });
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -54,6 +69,7 @@ export default function MockInterviewPage() {
     nextMessages: ChatMessage[];
     activeSetup: SetupForm;
   } | null>(null);
+  const [questionSecondsLeft, setQuestionSecondsLeft] = useState<number | null>(null);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -166,6 +182,28 @@ export default function MockInterviewPage() {
     };
   }, []);
 
+  // Real-interview pacing: (re)start the per-question countdown whenever a
+  // new question (assistant message) arrives.
+  useEffect(() => {
+    if (!setup || setup.secondsPerQuestion <= 0) return;
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage?.role === "assistant") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setQuestionSecondsLeft(setup.secondsPerQuestion);
+    }
+  }, [messages, setup]);
+
+  useEffect(() => {
+    if (questionSecondsLeft === null || loading) return;
+    if (questionSecondsLeft <= 0) {
+      handleSend(true);
+      return;
+    }
+    const t = setTimeout(() => setQuestionSecondsLeft((s) => (s !== null ? s - 1 : s)), 1000);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [questionSecondsLeft, loading]);
+
   function toggleListening() {
     if (listening) {
       recognitionRef.current?.stop();
@@ -254,12 +292,14 @@ export default function MockInterviewPage() {
     await requestNextTurn([kickoff], form);
   }
 
-  async function handleSend() {
-    if (!input.trim() || !setup) return;
+  async function handleSend(auto = false) {
+    if (!setup) return;
+    if (!auto && !input.trim()) return;
+    setQuestionSecondsLeft(null);
     const userMessage: ChatMessage = {
       id: crypto.randomUUID(),
       role: "user",
-      content: input.trim(),
+      content: input.trim() || (auto ? "(Time expired — no answer given.)" : ""),
     };
     const nextMessages = [...messages, userMessage];
     setMessages(nextMessages);
@@ -417,6 +457,32 @@ export default function MockInterviewPage() {
                   ))}
                 </div>
               </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  Per-question timer (real-interview pacing)
+                </label>
+                <div className="flex flex-wrap gap-1.5">
+                  {TIMER_PRESETS.map((t) => (
+                    <button
+                      key={t.label}
+                      type="button"
+                      onClick={() => setForm({ ...form, secondsPerQuestion: t.seconds })}
+                      className={`rounded-full border px-2.5 py-1 text-xs ${
+                        form.secondsPerQuestion === t.seconds
+                          ? "border-blue-600 bg-blue-600 text-white"
+                          : "border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                      }`}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+                {form.secondsPerQuestion > 0 && (
+                  <p className="mt-1 text-xs text-neutral-400">
+                    When time runs out, your current answer is submitted automatically.
+                  </p>
+                )}
+              </div>
               {renderVoiceSettings()}
             </div>
           </details>
@@ -452,6 +518,17 @@ export default function MockInterviewPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
+          {questionSecondsLeft !== null && (
+            <div
+              className={`rounded-lg border px-3 py-1.5 text-sm font-mono ${
+                questionSecondsLeft <= 15
+                  ? "border-red-400 bg-red-50 text-red-600 dark:bg-red-950/40"
+                  : "border-neutral-300 dark:border-neutral-700"
+              }`}
+            >
+              ⏱ {formatTime(questionSecondsLeft)}
+            </div>
+          )}
           {speechSupported && (
             <label className="flex items-center gap-1.5 text-sm text-neutral-500">
               <input
@@ -461,6 +538,20 @@ export default function MockInterviewPage() {
               />
               🎙️ Voice
             </label>
+          )}
+          {hasAssistantMessage && (
+            <button
+              type="button"
+              onClick={() =>
+                downloadMockInterviewPdf(
+                  setup,
+                  visibleMessages.map((m) => ({ role: m.role, content: m.content }))
+                )
+              }
+              className="text-sm text-neutral-500 hover:underline"
+            >
+              📄 PDF
+            </button>
           )}
           <button
             type="button"
@@ -569,7 +660,7 @@ export default function MockInterviewPage() {
         />
         <button
           type="button"
-          onClick={handleSend}
+          onClick={() => handleSend()}
           disabled={loading}
           className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
         >

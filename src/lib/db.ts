@@ -51,6 +51,19 @@ export async function ensureSchema(): Promise<void> {
         created_at TIMESTAMPTZ NOT NULL DEFAULT now()
       )
     `;
+    await sql`
+      CREATE TABLE IF NOT EXISTS exams (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        format TEXT NOT NULL,
+        focus TEXT NOT NULL,
+        score INT NOT NULL,
+        total INT NOT NULL,
+        breakdown JSONB NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+      )
+    `;
+    await sql`CREATE INDEX IF NOT EXISTS idx_exams_user ON exams(user_id)`;
   })();
   return migrated;
 }

@@ -30,6 +30,35 @@ export interface NoteRow {
   created_at: Date;
 }
 
+export type ExamFormat = "MCQ" | "SHORT_ANSWER";
+
+export interface ExamQuestionResult {
+  question: string;
+  // MCQ only:
+  options?: string[];
+  correctIndex?: number;
+  selectedIndex?: number;
+  // SHORT_ANSWER only:
+  userAnswer?: string;
+  modelAnswer?: string;
+  feedback?: string;
+  // shared:
+  score: number;
+  maxScore: number;
+  explanation?: string;
+}
+
+export interface ExamRow {
+  id: string;
+  user_id: string;
+  format: ExamFormat;
+  focus: string;
+  score: number;
+  total: number;
+  breakdown: ExamQuestionResult[];
+  created_at: Date;
+}
+
 export async function countUsers(): Promise<number> {
   await ensureSchema();
   const rows = await sql<{ n: number }[]>`SELECT COUNT(*)::int as n FROM users`;
@@ -189,4 +218,47 @@ export async function updateNote(
 export async function deleteNote(id: string): Promise<void> {
   await ensureSchema();
   await sql`DELETE FROM notes WHERE id = ${id}`;
+}
+
+export async function createExam(
+  userId: string,
+  format: ExamFormat,
+  focus: string,
+  score: number,
+  total: number,
+  breakdown: ExamQuestionResult[]
+): Promise<ExamRow> {
+  await ensureSchema();
+  const id = randomUUID();
+  await sql`
+    INSERT INTO exams (id, user_id, format, focus, score, total, breakdown)
+    VALUES (${id}, ${userId}, ${format}, ${focus}, ${score}, ${total}, ${JSON.stringify(breakdown)}::jsonb)
+  `;
+  const exam = await getExamById(id, userId);
+  if (!exam) throw new Error("Failed to create exam");
+  return exam;
+}
+
+// postgres.js doesn't auto-parse this project's jsonb columns back into
+// JS values (comes back as the raw JSON string) — normalize defensively
+// rather than depend on driver behavior.
+function parseExamRow(row: ExamRow): ExamRow {
+  return {
+    ...row,
+    breakdown: typeof row.breakdown === "string" ? JSON.parse(row.breakdown) : row.breakdown,
+  };
+}
+
+export async function getExamById(id: string, userId: string): Promise<ExamRow | null> {
+  await ensureSchema();
+  const rows = await sql<ExamRow[]>`SELECT * FROM exams WHERE id = ${id} AND user_id = ${userId}`;
+  return rows[0] ? parseExamRow(rows[0]) : null;
+}
+
+export async function listExamsForUser(userId: string, limit = 20): Promise<ExamRow[]> {
+  await ensureSchema();
+  const rows = await sql<ExamRow[]>`
+    SELECT * FROM exams WHERE user_id = ${userId} ORDER BY created_at DESC LIMIT ${limit}
+  `;
+  return rows.map(parseExamRow);
 }

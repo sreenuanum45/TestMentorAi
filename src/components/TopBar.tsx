@@ -9,6 +9,7 @@ import type { Role } from "@/lib/repo";
 const FEATURE_LINKS = [
   { href: "/study", label: "Study Companion", icon: "📚" },
   { href: "/mock-interview", label: "Mock Interviewer", icon: "🎤" },
+  { href: "/exam", label: "Timed Exam", icon: "📝" },
   { href: "/resume-questions", label: "Resume Questions", icon: "📄" },
   { href: "/locator-sandbox", label: "Locator Sandbox", icon: "🔍" },
 ];

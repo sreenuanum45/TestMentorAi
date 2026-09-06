@@ -15,6 +15,12 @@ const FEATURES = [
       "A 5-question, one-at-a-time simulated interview with live micro-evaluations, optional voice mode, and a final Hire / No-Hire scorecard.",
   },
   {
+    href: "/exam",
+    title: "📝 Timed Exam",
+    description:
+      "A formal, timed QA exam — multiple-choice or short-answer, auto-graded instantly with a per-question breakdown and a downloadable PDF report.",
+  },
+  {
     href: "/resume-questions",
     title: "📄 Resume-to-Question Generator",
     description:

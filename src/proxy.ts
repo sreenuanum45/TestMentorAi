@@ -6,6 +6,8 @@ const ADMIN_PATHS = ["/admin"];
 const PROTECTED_PATHS = [
   "/study",
   "/mock-interview",
+  "/exam",
+  "/review",
   "/dashboard",
   "/resume-questions",
   "/locator-sandbox",
@@ -45,5 +47,14 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/study/:path*", "/mock-interview/:path*", "/dashboard/:path*", "/resume-questions/:path*", "/locator-sandbox/:path*", "/admin/:path*"],
+  matcher: [
+    "/study/:path*",
+    "/mock-interview/:path*",
+    "/exam/:path*",
+    "/review/:path*",
+    "/dashboard/:path*",
+    "/resume-questions/:path*",
+    "/locator-sandbox/:path*",
+    "/admin/:path*",
+  ],
 };

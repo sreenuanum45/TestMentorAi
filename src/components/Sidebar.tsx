@@ -4,11 +4,15 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { Role } from "@/lib/repo";
 
-const PRIMARY_LINKS = [{ href: "/dashboard", label: "Dashboard", icon: "🏠" }];
+const PRIMARY_LINKS = [
+  { href: "/dashboard", label: "Dashboard", icon: "🏠" },
+  { href: "/review", label: "Review", icon: "🔁" },
+];
 
 const TOOL_LINKS = [
   { href: "/study", label: "Study Companion", icon: "📚" },
   { href: "/mock-interview", label: "Mock Interviewer", icon: "🎤" },
+  { href: "/exam", label: "Timed Exam", icon: "📝" },
   { href: "/resume-questions", label: "Resume Questions", icon: "📄" },
   { href: "/locator-sandbox", label: "Locator Sandbox", icon: "🔍" },
 ];
