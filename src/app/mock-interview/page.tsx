@@ -189,16 +189,19 @@ export default function MockInterviewPage() {
     // one big delayed dump at the end.
     recognition.interimResults = true;
     recognition.onresult = (event) => {
-      let finalText = "";
-      let interimText = "";
+      // Each result is a separate recognized phrase — joining them with `+=`
+      // (no separator) glued adjacent phrases into one garbled word in
+      // continuous mode. Collect each trimmed segment and join with spaces.
+      const finalParts: string[] = [];
+      let interimPart = "";
       for (let i = 0; i < event.results.length; i++) {
         const result = event.results[i];
-        if (result.isFinal) finalText += result[0]?.transcript ?? "";
-        else interimText += result[0]?.transcript ?? "";
+        const text = result[0]?.transcript?.trim() ?? "";
+        if (!text) continue;
+        if (result.isFinal) finalParts.push(text);
+        else interimPart = text;
       }
-      // Concatenate, don't choose one — with continuous mode there can be
-      // several finalized segments already, plus one in-progress interim one.
-      const transcript = `${finalText}${interimText}`.trim();
+      const transcript = [...finalParts, interimPart].filter(Boolean).join(" ");
       setInput(baseText ? `${baseText} ${transcript}` : transcript);
     };
     recognition.onend = () => setListening(false);
