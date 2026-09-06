@@ -2,6 +2,7 @@
 
 import { Suspense } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Calendar, ChevronDown, ListFilter } from "lucide-react";
 
 const RANGE_OPTIONS = [7, 14, 30, 90];
 const MODULE_OPTIONS = [
@@ -45,12 +46,14 @@ function Filters({ range, moduleFilter }: { range: number; moduleFilter: string 
             </option>
           ))}
         </select>
-        <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-sm">
-          📅
-        </span>
-        <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-neutral-400">
-          ▾
-        </span>
+        <Calendar
+          className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-400"
+          aria-hidden
+        />
+        <ChevronDown
+          className="pointer-events-none absolute right-2.5 top-1/2 h-3 w-3 -translate-y-1/2 text-neutral-400"
+          aria-hidden
+        />
       </div>
       <div className="relative">
         <select
@@ -66,12 +69,14 @@ function Filters({ range, moduleFilter }: { range: number; moduleFilter: string 
             </option>
           ))}
         </select>
-        <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-sm">
-          🔎
-        </span>
-        <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-neutral-400">
-          ▾
-        </span>
+        <ListFilter
+          className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-400"
+          aria-hidden
+        />
+        <ChevronDown
+          className="pointer-events-none absolute right-2.5 top-1/2 h-3 w-3 -translate-y-1/2 text-neutral-400"
+          aria-hidden
+        />
       </div>
     </div>
   );

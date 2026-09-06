@@ -3,15 +3,25 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import {
+  Bell,
+  BookOpen,
+  ChevronDown,
+  ClipboardList,
+  FileText,
+  GraduationCap,
+  Mic,
+  Search,
+} from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import type { Role } from "@/lib/repo";
 
 const FEATURE_LINKS = [
-  { href: "/study", label: "Study Companion", icon: "📚" },
-  { href: "/mock-interview", label: "Mock Interviewer", icon: "🎤" },
-  { href: "/exam", label: "Timed Exam", icon: "📝" },
-  { href: "/resume-questions", label: "Resume Questions", icon: "📄" },
-  { href: "/locator-sandbox", label: "Locator Sandbox", icon: "🔍" },
+  { href: "/study", label: "Study Companion", icon: BookOpen },
+  { href: "/mock-interview", label: "Mock Interviewer", icon: Mic },
+  { href: "/exam", label: "Timed Exam", icon: ClipboardList },
+  { href: "/resume-questions", label: "Resume Questions", icon: FileText },
+  { href: "/locator-sandbox", label: "Locator Sandbox", icon: Search },
 ];
 
 export interface Notification {
@@ -43,16 +53,16 @@ export default function TopBar({
       <div className="flex h-16 items-center justify-between gap-4 px-4 md:px-6">
         {!user ? (
           <Link href="/" className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-base">
-              🎓
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-white">
+              <GraduationCap className="h-4 w-4" aria-hidden />
             </span>
             <span className="font-bold">TestMentor AI</span>
           </Link>
         ) : (
           <nav className="flex flex-1 flex-wrap items-center gap-1">
             <Link href="/" className="mr-1 flex items-center gap-2 md:hidden">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-sm">
-                🎓
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-white">
+                <GraduationCap className="h-4 w-4" aria-hidden />
               </span>
             </Link>
             {FEATURE_LINKS.map((l) => {
@@ -67,7 +77,7 @@ export default function TopBar({
                       : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
                   }`}
                 >
-                  <span aria-hidden>{l.icon}</span>
+                  <l.icon className="h-4 w-4 shrink-0" aria-hidden />
                   <span className="hidden sm:inline">{l.label}</span>
                 </Link>
               );
@@ -83,9 +93,9 @@ export default function TopBar({
                 type="button"
                 onClick={() => setNotifOpen((o) => !o)}
                 aria-label="Notifications"
-                className="relative flex h-8 w-8 items-center justify-center rounded-full text-base hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                className="relative flex h-8 w-8 items-center justify-center rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800"
               >
-                🔔
+                <Bell className="h-4 w-4" aria-hidden />
                 {notifications.length > 0 && (
                   <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-red-500" />
                 )}
@@ -134,9 +144,7 @@ export default function TopBar({
                     {user.role === "ADMIN" ? "Admin" : "Student"}
                   </span>
                 </span>
-                <span aria-hidden className="text-xs text-neutral-400">
-                  ▾
-                </span>
+                <ChevronDown className="h-3.5 w-3.5 text-neutral-400" aria-hidden />
               </button>
               {menuOpen && (
                 <>

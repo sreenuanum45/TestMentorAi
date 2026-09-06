@@ -98,6 +98,16 @@ export async function updateUserPassword(userId: string, passwordHash: string): 
   await sql`UPDATE users SET password_hash = ${passwordHash} WHERE id = ${userId}`;
 }
 
+export async function updateUserRole(userId: string, role: Role): Promise<void> {
+  await ensureSchema();
+  await sql`UPDATE users SET role = ${role} WHERE id = ${userId}`;
+}
+
+export async function deleteUser(userId: string): Promise<void> {
+  await ensureSchema();
+  await sql`DELETE FROM users WHERE id = ${userId}`;
+}
+
 export async function listUsersWithMessageCounts(): Promise<
   (UserRow & { message_count: number })[]
 > {

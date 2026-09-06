@@ -14,6 +14,7 @@ const PROTECTED_PATHS = [
   "/profile",
   "/settings",
   "/help",
+  "/pro",
   ...ADMIN_PATHS,
 ];
 
@@ -61,6 +62,7 @@ export const config = {
     "/profile/:path*",
     "/settings/:path*",
     "/help/:path*",
+    "/pro/:path*",
     "/admin/:path*",
   ],
 };

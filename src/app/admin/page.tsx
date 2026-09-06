@@ -1,7 +1,10 @@
+import { getCurrentUser } from "@/lib/auth";
 import { listUsersWithMessageCounts } from "@/lib/repo";
 import NotesManager from "@/components/NotesManager";
+import AdminUserActions from "@/components/AdminUserActions";
 
 export default async function AdminPage() {
+  const session = await getCurrentUser();
   const users = await listUsersWithMessageCounts();
 
   return (
@@ -18,6 +21,7 @@ export default async function AdminPage() {
               <th className="px-4 py-2 font-medium">Role</th>
               <th className="px-4 py-2 font-medium">Messages</th>
               <th className="px-4 py-2 font-medium">Joined</th>
+              <th className="px-4 py-2 font-medium">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -38,6 +42,13 @@ export default async function AdminPage() {
                 <td className="px-4 py-2">{u.message_count}</td>
                 <td className="px-4 py-2 text-neutral-500">
                   {new Date(u.created_at).toLocaleDateString()}
+                </td>
+                <td className="px-4 py-2">
+                  {session && u.id === session.sub ? (
+                    <span className="text-xs text-neutral-400">(you)</span>
+                  ) : (
+                    <AdminUserActions userId={u.id} role={u.role} />
+                  )}
                 </td>
               </tr>
             ))}

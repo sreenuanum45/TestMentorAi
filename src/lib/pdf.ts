@@ -101,6 +101,42 @@ export function downloadExamPdf(exam: ExamRow) {
   w.save(`qa-exam-${exam.focus.toLowerCase().replace(/\s+/g, "-")}.pdf`);
 }
 
+export function downloadProgressReportPdf(email: string, exams: ExamRow[]) {
+  const w = new PdfWriter();
+  w.title("QA Prep Progress Report");
+  w.subtitle(`${email} · Generated ${new Date().toLocaleString()}`);
+  w.rule();
+
+  const totalExams = exams.length;
+  const avgPct =
+    totalExams > 0
+      ? Math.round(
+          (exams.reduce((acc, e) => acc + (e.total > 0 ? e.score / e.total : 0), 0) / totalExams) *
+            100
+        )
+      : 0;
+
+  w.heading("Summary");
+  w.body(`Exams taken: ${totalExams}`);
+  w.body(`Average score: ${avgPct}%`);
+  w.spacer(3);
+  w.rule();
+
+  w.heading("Exam History");
+  if (exams.length === 0) {
+    w.body("No exams taken yet.");
+  }
+  exams.forEach((e) => {
+    const pct = e.total > 0 ? Math.round((e.score / e.total) * 100) : 0;
+    w.body(
+      `${new Date(e.created_at).toLocaleDateString()} — ${e.focus} (${e.format === "MCQ" ? "Multiple Choice" : "Short Answer"}): ${e.score}/${e.total} (${pct}%)`,
+      pct < 60 ? { color: [185, 28, 28] } : undefined
+    );
+  });
+
+  w.save("qa-prep-progress-report.pdf");
+}
+
 export function downloadMockInterviewPdf(
   setup: { role: string; experience: string; focus: string; difficulty: string },
   messages: { role: "user" | "assistant"; content: string }[]

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth";
 import { listExamsForUser } from "@/lib/repo";
+import DownloadProgressReport from "@/components/DownloadProgressReport";
 
 export default async function ReviewPage() {
   const user = await getCurrentUser();
@@ -19,11 +20,18 @@ export default async function ReviewPage() {
 
   return (
     <div className="mx-auto w-full max-w-3xl px-6 py-10">
-      <h1 className="text-xl font-semibold">Review — Weak Spots</h1>
-      <p className="mt-1 text-sm text-neutral-500">
-        Questions you scored lowest on across past timed exams — worth revisiting before your
-        next interview.
-      </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-semibold">Review — Weak Spots</h1>
+          <p className="mt-1 text-sm text-neutral-500">
+            Questions you scored lowest on across past timed exams — worth revisiting before
+            your next interview.
+          </p>
+        </div>
+        {exams.length > 0 && (
+          <DownloadProgressReport email={user.email} exams={exams} />
+        )}
+      </div>
 
       {exams.length === 0 && (
         <p className="mt-6 text-sm text-neutral-400">

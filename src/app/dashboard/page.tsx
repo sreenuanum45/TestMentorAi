@@ -1,4 +1,14 @@
 import Link from "next/link";
+import {
+  ArrowRight,
+  BarChart3,
+  BookOpen,
+  Flame,
+  Mic,
+  MessageCircle,
+  Target,
+  TrendingUp,
+} from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
 import { countMessagesByModule, getActivityByDay, type ChatModule } from "@/lib/repo";
 import ActivityChart from "@/components/ActivityChart";
@@ -95,38 +105,38 @@ export default async function DashboardPage({
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="rounded-xl bg-blue-50 p-4 dark:bg-blue-950/30">
           <div className="flex items-start justify-between">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-lg text-white">
-              💬
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white">
+              <MessageCircle className="h-5 w-5" aria-hidden />
             </span>
             <MiniBars className="text-blue-500" />
           </div>
           <div className="mt-3 text-2xl font-bold">{studyCount}</div>
           <div className="text-xs text-neutral-500">Study questions asked</div>
           {studyThisWeek > 0 && (
-            <div className="mt-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">
-              ↗ +{studyThisWeek} this week
+            <div className="mt-1 flex items-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+              <TrendingUp className="h-3 w-3" aria-hidden />+{studyThisWeek} this week
             </div>
           )}
         </div>
         <div className="rounded-xl bg-emerald-50 p-4 dark:bg-emerald-950/30">
           <div className="flex items-start justify-between">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-lg text-white">
-              🎯
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white">
+              <Target className="h-5 w-5" aria-hidden />
             </span>
             <MiniBars className="text-emerald-500" />
           </div>
           <div className="mt-3 text-2xl font-bold">{mockCount}</div>
           <div className="text-xs text-neutral-500">Mock interview turns</div>
           {mockThisWeek > 0 && (
-            <div className="mt-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">
-              ↗ +{mockThisWeek} this week
+            <div className="mt-1 flex items-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+              <TrendingUp className="h-3 w-3" aria-hidden />+{mockThisWeek} this week
             </div>
           )}
         </div>
         <div className="rounded-xl bg-orange-50 p-4 dark:bg-orange-950/30">
           <div className="flex items-start justify-between">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500 text-lg text-white">
-              🔥
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500 text-white">
+              <Flame className="h-5 w-5" aria-hidden />
             </span>
             <MiniBars className="text-orange-500" />
           </div>
@@ -140,7 +150,10 @@ export default async function DashboardPage({
 
       <div className="mt-6 rounded-xl border border-neutral-200 dark:border-neutral-800 p-4 sm:p-5">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-semibold">
+          <h2 className="flex items-center gap-2 font-semibold">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400">
+              <BarChart3 className="h-4 w-4" aria-hidden />
+            </span>
             Activity (Last {range} days
             {moduleFilter !== "all" ? ` — ${moduleFilter === "STUDY" ? "Study Companion" : "Mock Interviewer"}` : ""})
           </h2>
@@ -154,31 +167,27 @@ export default async function DashboardPage({
           href="/study"
           className="group flex items-center gap-4 rounded-xl border border-neutral-200 bg-gradient-to-r from-blue-600 to-indigo-600 p-5 text-white transition-transform hover:scale-[1.01] dark:border-neutral-800"
         >
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20 text-xl">
-            📚
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20">
+            <BookOpen className="h-5 w-5" aria-hidden />
           </span>
           <div className="flex-1">
             <p className="font-semibold">Continue studying</p>
             <p className="text-sm text-white/80">Pick up where you left off</p>
           </div>
-          <span aria-hidden className="text-xl transition-transform group-hover:translate-x-1">
-            →
-          </span>
+          <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" aria-hidden />
         </Link>
         <Link
           href="/mock-interview"
           className="group flex items-center gap-4 rounded-xl border border-neutral-200 bg-gradient-to-r from-emerald-500 to-teal-600 p-5 text-white transition-transform hover:scale-[1.01] dark:border-neutral-800"
         >
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20 text-xl">
-            🎤
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20">
+            <Mic className="h-5 w-5" aria-hidden />
           </span>
           <div className="flex-1">
             <p className="font-semibold">Start a mock interview</p>
             <p className="text-sm text-white/80">Practice with AI and improve</p>
           </div>
-          <span aria-hidden className="text-xl transition-transform group-hover:translate-x-1">
-            →
-          </span>
+          <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" aria-hidden />
         </Link>
       </div>
     </div>
