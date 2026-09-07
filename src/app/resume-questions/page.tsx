@@ -2,8 +2,10 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
+import { FileText, Paperclip, Sparkles } from "lucide-react";
 import type { ResumeQuestionsResult } from "@/app/api/resume-questions/route";
 import { readFileAsBase64 } from "@/lib/file";
+import PageHero from "@/components/PageHero";
 
 const DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
@@ -72,14 +74,16 @@ export default function ResumeQuestionsPage() {
 
   return (
     <div className="mx-auto w-full max-w-3xl px-6 py-10">
-      <h1 className="text-xl font-semibold">Resume-to-Question Generator</h1>
-      <p className="mt-1 text-sm text-neutral-500">
-        Paste your resume text (or the skills section). We&apos;ll pull out the QA tools you
-        listed and build a targeted question bank — click any question to drill it in the Study
-        Companion.
-      </p>
+      <PageHero
+        icon={FileText}
+        eyebrow="Personalized Prep"
+        title="Resume-to-Question Generator"
+        description="Paste your resume text (or the skills section). We'll pull out the QA tools you listed and build a targeted question bank — click any question to drill it in the Study Companion."
+        tagline="Your Resume. Your Questions."
+        color="violet"
+      />
 
-      <form onSubmit={handleSubmit} className="mt-6">
+      <form onSubmit={handleSubmit} className="mt-6 rounded-2xl border border-neutral-200 p-5 dark:border-neutral-800 sm:p-6">
         <div className="mb-2 flex items-center gap-2">
           <input
             ref={fileInputRef}
@@ -91,9 +95,10 @@ export default function ResumeQuestionsPage() {
           />
           <label
             htmlFor="resume-file-upload"
-            className="cursor-pointer rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-1.5 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800"
+            className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-1.5 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800"
           >
-            📎 Upload PDF/DOCX
+            <Paperclip className="h-3.5 w-3.5" aria-hidden />
+            Upload PDF/DOCX
           </label>
           {extracting && <span className="text-sm text-neutral-400">Extracting text…</span>}
         </div>
@@ -102,13 +107,14 @@ export default function ResumeQuestionsPage() {
           onChange={(e) => setResumeText(e.target.value)}
           rows={8}
           placeholder="Paste your resume text here, or upload a PDF/DOCX above…"
-          className="w-full rounded-lg border border-neutral-300 dark:border-neutral-700 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full rounded-lg border border-neutral-300 dark:border-neutral-700 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
         <button
           type="submit"
           disabled={loading}
-          className="mt-3 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+          className="mt-3 flex items-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-transform hover:scale-[1.01] disabled:opacity-50"
         >
+          <Sparkles className="h-4 w-4" aria-hidden />
           {loading ? "Analyzing…" : "Generate questions"}
         </button>
       </form>

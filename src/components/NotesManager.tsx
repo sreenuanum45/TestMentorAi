@@ -106,7 +106,7 @@ export default function NotesManager() {
         <button
           type="submit"
           disabled={creating}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+          className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
         >
           {creating ? "Adding…" : "Add note"}
         </button>
@@ -134,7 +134,7 @@ export default function NotesManager() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleSaveEdit(note.id)}
-                    className="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white"
+                    className="rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-white"
                   >
                     Save
                   </button>
@@ -151,7 +151,7 @@ export default function NotesManager() {
                 <div className="flex items-start justify-between gap-2">
                   <h4 className="font-medium">{note.title}</h4>
                   <div className="flex shrink-0 gap-2 text-sm">
-                    <button onClick={() => startEdit(note)} className="text-blue-600 hover:underline">
+                    <button onClick={() => startEdit(note)} className="text-primary hover:underline">
                       Edit
                     </button>
                     <button onClick={() => handleDelete(note.id)} className="text-red-500 hover:underline">

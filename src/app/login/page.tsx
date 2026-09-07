@@ -3,6 +3,7 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { LogIn } from "lucide-react";
 
 export default function LoginPage() {
   return (
@@ -43,7 +44,11 @@ function LoginForm() {
 
   return (
     <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center px-6 py-16">
-      <h1 className="mb-6 text-xl font-semibold">Log in</h1>
+      <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-sm">
+        <LogIn className="h-6 w-6" aria-hidden />
+      </span>
+      <h1 className="mb-1 text-xl font-semibold">Welcome back</h1>
+      <p className="mb-6 text-sm text-neutral-500">Log in to continue your QA interview prep.</p>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="mb-1 block text-sm font-medium">Email</label>
@@ -69,14 +74,14 @@ function LoginForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+          className="w-full rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover disabled:opacity-50"
         >
           {loading ? "Logging in…" : "Log in"}
         </button>
       </form>
       <p className="mt-4 text-sm text-neutral-500">
         No account?{" "}
-        <Link href="/signup" className="text-blue-600 hover:underline">
+        <Link href="/signup" className="text-primary hover:underline">
           Sign up
         </Link>
       </p>

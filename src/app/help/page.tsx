@@ -1,3 +1,6 @@
+import { Heart, HelpCircle, Mail, Phone } from "lucide-react";
+import PageHeader from "@/components/PageHeader";
+
 const FAQS = [
   {
     q: "How does the Mock Interviewer decide when to advance to the next question?",
@@ -24,12 +27,14 @@ const FAQS = [
 export default function HelpPage() {
   return (
     <div className="mx-auto w-full max-w-2xl px-6 py-10">
-      <h1 className="text-xl font-semibold">Help & Support</h1>
-      <p className="mt-1 text-sm text-neutral-500">
-        Common questions about how TestMentor AI works.
-      </p>
+      <PageHeader
+        icon={HelpCircle}
+        title="Help & Support"
+        description="Common questions about how TestMentor AI works."
+        color="rose"
+      />
 
-      <div className="mt-6 space-y-3">
+      <div className="space-y-3">
         {FAQS.map((item) => (
           <details
             key={item.q}
@@ -44,9 +49,38 @@ export default function HelpPage() {
       <div className="mt-8 rounded-xl border border-neutral-200 dark:border-neutral-800 p-5">
         <h2 className="font-medium">Still stuck?</h2>
         <p className="mt-1 text-sm text-neutral-500">
-          This instance is run by whoever set it up for you — reach out to them directly for
-          account or billing issues.
+          Reach out directly for account or billing issues, bug reports, or feature requests.
         </p>
+        <div className="mt-3 flex flex-col gap-2 text-sm">
+          <a
+            href="tel:+917416472820"
+            className="flex items-center gap-2 text-primary hover:underline dark:text-indigo-400"
+          >
+            <Phone className="h-4 w-4" aria-hidden />
+            +91 74164 72820
+          </a>
+          <a
+            href="mailto:anumandlasreenu@gmail.com"
+            className="flex items-center gap-2 text-primary hover:underline dark:text-indigo-400"
+          >
+            <Mail className="h-4 w-4" aria-hidden />
+            anumandlasreenu@gmail.com
+          </a>
+        </div>
+      </div>
+
+      <div className="mt-4 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-5 dark:border-amber-900 dark:bg-amber-950/30">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 text-white">
+          <Heart className="h-4 w-4" aria-hidden />
+        </span>
+        <div>
+          <h2 className="font-medium text-amber-900 dark:text-amber-200">Support this project</h2>
+          <p className="mt-1 text-sm text-amber-700/80 dark:text-amber-300/70">
+            TestMentor AI is a solo-built project. If it helped with your interview prep and
+            you&apos;d like to contribute toward hosting and API costs, reach out on the phone
+            number or email above and we&apos;ll sort out the details directly.
+          </p>
+        </div>
       </div>
     </div>
   );

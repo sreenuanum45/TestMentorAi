@@ -6,20 +6,28 @@ import { useState } from "react";
 import {
   Bell,
   BookOpen,
+  Bookmark,
   ChevronDown,
   ClipboardList,
+  Code2,
   FileText,
   GraduationCap,
+  History,
   Mic,
+  NotebookPen,
+  Repeat,
   Search,
+  Sparkles,
 } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
+import GlobalSearch from "@/components/GlobalSearch";
 import type { Role } from "@/lib/repo";
 
 const FEATURE_LINKS = [
   { href: "/study", label: "Study Companion", icon: BookOpen },
   { href: "/mock-interview", label: "Mock Interviewer", icon: Mic },
   { href: "/exam", label: "Timed Exam", icon: ClipboardList },
+  { href: "/coding", label: "Coding Practice", icon: Code2 },
   { href: "/resume-questions", label: "Resume Questions", icon: FileText },
   { href: "/locator-sandbox", label: "Locator Sandbox", icon: Search },
 ];
@@ -49,19 +57,19 @@ export default function TopBar({
   }
 
   return (
-    <header className="sticky top-0 z-10 border-b border-neutral-200 bg-white/80 backdrop-blur dark:border-neutral-800 dark:bg-black/80">
+    <header className="sticky top-0 z-10 border-b border-border-subtle bg-surface/80 shadow-sm backdrop-blur">
       <div className="flex h-16 items-center justify-between gap-4 px-4 md:px-6">
         {!user ? (
           <Link href="/" className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-white">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white">
               <GraduationCap className="h-4 w-4" aria-hidden />
             </span>
             <span className="font-bold">TestMentor AI</span>
           </Link>
         ) : (
-          <nav className="flex flex-1 flex-wrap items-center gap-1">
+          <nav className="flex flex-wrap items-center gap-1">
             <Link href="/" className="mr-1 flex items-center gap-2 md:hidden">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-white">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-white">
                 <GraduationCap className="h-4 w-4" aria-hidden />
               </span>
             </Link>
@@ -73,7 +81,7 @@ export default function TopBar({
                   href={l.href}
                   className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm transition-colors ${
                     active
-                      ? "bg-blue-600 text-white"
+                      ? "bg-primary text-white"
                       : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
                   }`}
                 >
@@ -84,6 +92,8 @@ export default function TopBar({
             })}
           </nav>
         )}
+
+        {user && <GlobalSearch role={user.role} />}
 
         <div className="flex items-center gap-3">
           <ThemeToggle />
@@ -103,7 +113,7 @@ export default function TopBar({
               {notifOpen && (
                 <>
                   <div className="fixed inset-0 z-10" onClick={() => setNotifOpen(false)} />
-                  <div className="absolute right-0 z-20 mt-2 w-72 rounded-lg border border-neutral-200 bg-white py-1 shadow-lg dark:border-neutral-800 dark:bg-neutral-900">
+                  <div className="absolute right-0 z-20 mt-2 w-72 rounded-lg border border-border-subtle bg-surface py-1 shadow-lg">
                     <div className="border-b border-neutral-100 px-3 py-2 text-xs font-medium uppercase tracking-wide text-neutral-400 dark:border-neutral-800">
                       Notifications
                     </div>
@@ -149,13 +159,45 @@ export default function TopBar({
               {menuOpen && (
                 <>
                   <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
-                  <div className="absolute right-0 z-20 mt-2 w-44 rounded-lg border border-neutral-200 bg-white py-1 shadow-lg dark:border-neutral-800 dark:bg-neutral-900">
+                  <div className="absolute right-0 z-20 mt-2 w-44 rounded-lg border border-border-subtle bg-surface py-1 shadow-lg">
                     <Link
                       href="/dashboard"
                       onClick={() => setMenuOpen(false)}
-                      className="block px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden"
+                      className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden"
                     >
                       Dashboard
+                    </Link>
+                    <Link
+                      href="/review"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden"
+                    >
+                      <Repeat className="h-3.5 w-3.5" aria-hidden />
+                      Review
+                    </Link>
+                    <Link
+                      href="/exams"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden"
+                    >
+                      <History className="h-3.5 w-3.5" aria-hidden />
+                      Exam History
+                    </Link>
+                    <Link
+                      href="/saved"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden"
+                    >
+                      <Bookmark className="h-3.5 w-3.5" aria-hidden />
+                      Saved
+                    </Link>
+                    <Link
+                      href="/notes"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden"
+                    >
+                      <NotebookPen className="h-3.5 w-3.5" aria-hidden />
+                      Notes
                     </Link>
                     <Link
                       href="/profile"
@@ -177,6 +219,14 @@ export default function TopBar({
                       className="block px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden"
                     >
                       Help & Support
+                    </Link>
+                    <Link
+                      href="/pro"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2 text-sm text-amber-600 hover:bg-neutral-100 dark:text-amber-400 dark:hover:bg-neutral-800 md:hidden"
+                    >
+                      <Sparkles className="h-3.5 w-3.5" aria-hidden />
+                      Upgrade to Pro
                     </Link>
                     {user.role === "ADMIN" && (
                       <Link
@@ -205,7 +255,7 @@ export default function TopBar({
               </Link>
               <Link
                 href="/signup"
-                className="rounded-full bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700"
+                className="rounded-full bg-primary px-3 py-1.5 text-sm text-white hover:bg-primary-hover"
               >
                 Sign up
               </Link>

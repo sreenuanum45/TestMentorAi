@@ -51,7 +51,7 @@ export default function AdminUserActions({ userId, role }: { userId: string; rol
           type="button"
           disabled={loading}
           onClick={() => changeRole(role === "ADMIN" ? "STUDENT" : "ADMIN")}
-          className="text-blue-600 hover:underline disabled:opacity-50 dark:text-blue-400"
+          className="text-primary hover:underline disabled:opacity-50 dark:text-indigo-400"
         >
           {role === "ADMIN" ? "Make Student" : "Make Admin"}
         </button>

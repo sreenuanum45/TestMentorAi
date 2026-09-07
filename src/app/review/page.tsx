@@ -1,7 +1,10 @@
 import Link from "next/link";
+import { Repeat } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
 import { listExamsForUser } from "@/lib/repo";
 import DownloadProgressReport from "@/components/DownloadProgressReport";
+import PageHeader from "@/components/PageHeader";
+import BookmarkButton from "@/components/BookmarkButton";
 
 export default async function ReviewPage() {
   const user = await getCurrentUser();
@@ -20,23 +23,27 @@ export default async function ReviewPage() {
 
   return (
     <div className="mx-auto w-full max-w-3xl px-6 py-10">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-semibold">Review — Weak Spots</h1>
-          <p className="mt-1 text-sm text-neutral-500">
-            Questions you scored lowest on across past timed exams — worth revisiting before
-            your next interview.
-          </p>
+      <PageHeader
+        icon={Repeat}
+        title="Review — Weak Spots"
+        description="Questions you scored lowest on across past timed exams — worth revisiting before your next interview."
+        color="violet"
+      >
+        <div className="flex shrink-0 items-center gap-2">
+          <Link
+            href="/exams"
+            className="rounded-lg border border-neutral-300 px-3 py-1.5 text-sm font-medium dark:border-neutral-700"
+          >
+            Exam History
+          </Link>
+          {exams.length > 0 && <DownloadProgressReport email={user.email} exams={exams} />}
         </div>
-        {exams.length > 0 && (
-          <DownloadProgressReport email={user.email} exams={exams} />
-        )}
-      </div>
+      </PageHeader>
 
       {exams.length === 0 && (
         <p className="mt-6 text-sm text-neutral-400">
           No exam attempts yet — take a{" "}
-          <Link href="/exam" className="text-blue-600 hover:underline dark:text-blue-400">
+          <Link href="/exam" className="text-primary hover:underline dark:text-indigo-400">
             Timed Exam
           </Link>{" "}
           to start building your review list.
@@ -70,12 +77,19 @@ export default async function ReviewPage() {
             {(q.explanation || q.feedback) && (
               <p className="mt-1 text-neutral-500">{q.explanation || q.feedback}</p>
             )}
-            <Link
-              href={`/study?q=${encodeURIComponent(q.question)}`}
-              className="mt-2 inline-block text-blue-600 hover:underline dark:text-blue-400"
-            >
-              Practice in Study Companion →
-            </Link>
+            <div className="mt-2 flex items-center gap-4">
+              <Link
+                href={`/study?q=${encodeURIComponent(q.question)}`}
+                className="text-primary hover:underline dark:text-indigo-400"
+              >
+                Practice in Study Companion →
+              </Link>
+              <BookmarkButton
+                module="EXAM"
+                question={q.question}
+                answer={q.modelAnswer || q.explanation || q.feedback}
+              />
+            </div>
           </div>
         ))}
       </div>

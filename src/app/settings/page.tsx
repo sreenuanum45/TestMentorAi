@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { Settings as SettingsIcon } from "lucide-react";
+import PageHeader from "@/components/PageHeader";
 import ThemeToggle from "@/components/ThemeToggle";
 
 export default function SettingsPage() {
@@ -41,9 +43,9 @@ export default function SettingsPage() {
 
   return (
     <div className="mx-auto w-full max-w-2xl px-6 py-10">
-      <h1 className="text-xl font-semibold">Settings</h1>
+      <PageHeader icon={SettingsIcon} title="Settings" color="blue" />
 
-      <div className="mt-6 rounded-xl border border-neutral-200 dark:border-neutral-800 p-5">
+      <div className="rounded-xl border border-neutral-200 dark:border-neutral-800 p-5">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="font-medium">Appearance</h2>
@@ -93,7 +95,7 @@ export default function SettingsPage() {
           <button
             type="submit"
             disabled={loading}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
           >
             {loading ? "Updating…" : "Update password"}
           </button>

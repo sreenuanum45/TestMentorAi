@@ -6,7 +6,14 @@
   --background: #f8fafc;
   --foreground: #171717;
   --surface: #ffffff;
-  --border-subtle: #e5e7eb;
+  --border-subtle: #e2e8f0;
+
+  /* Brand tokens: fixed across every theme (light/dark/color themes alike). */
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --secondary: #e2e8f0;
+  --ai-indigo: #6366f1;
+  --ai-teal: #14b8a6;
 }
 
 .dark {
@@ -16,11 +23,66 @@
   --border-subtle: #27272a;
 }
 
+/* Navy theme: Navy + Indigo + Teal + Slate. Applied together with .dark
+   (so the app's existing `dark:` utility classes still apply everywhere)
+   and this block layers the distinct navy/teal palette on top. */
+[data-theme="navy"] {
+  --background: #0a0f1f;
+  --foreground: #e2e8f0;
+  --surface: #101a30;
+  --border-subtle: #1e2a47;
+}
+
+/* Forest theme: Emerald + Teal + Slate. Dark-based, like Navy above. */
+[data-theme="forest"] {
+  --background: #06120d;
+  --foreground: #dcf5e8;
+  --surface: #0b1f17;
+  --border-subtle: #163229;
+}
+
+/* Sunset theme: Orange + Rose + warm charcoal. Dark-based, like Navy above. */
+[data-theme="sunset"] {
+  --background: #1a0f0a;
+  --foreground: #fde8d8;
+  --surface: #241511;
+  --border-subtle: #3a231a;
+}
+
+/* Paper theme: warm sepia/cream. Light-based, unlike the three themes above. */
+[data-theme="paper"] {
+  --background: #faf6ec;
+  --foreground: #2b2417;
+  --surface: #fffdf7;
+  --border-subtle: #e7dcbf;
+}
+
+/* Aurora theme: Violet + Fuchsia + Slate. Dark-based, like Navy above. */
+[data-theme="aurora"] {
+  --background: #120a1f;
+  --foreground: #f0e4fb;
+  --surface: #1c1030;
+  --border-subtle: #2f1c4d;
+}
+
+/* Blossom theme: Rose + Pink + warm white. Light-based, like Paper above. */
+[data-theme="blossom"] {
+  --background: #fdf5f6;
+  --foreground: #2b1420;
+  --surface: #ffffff;
+  --border-subtle: #f3d9e0;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
   --color-border-subtle: var(--border-subtle);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary: var(--secondary);
+  --color-ai-indigo: var(--ai-indigo);
+  --color-ai-teal: var(--ai-teal);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

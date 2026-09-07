@@ -1,7 +1,19 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import {
+  FileDown,
+  Mic,
+  MicOff,
+  Pause,
+  Play,
+  RotateCcw,
+  Square,
+  Timer,
+} from "lucide-react";
 import MessageBubble from "@/components/MessageBubble";
+import PageHero from "@/components/PageHero";
+import StepSection from "@/components/StepSection";
 import TypingIndicator from "@/components/TypingIndicator";
 import { downloadMockInterviewPdf } from "@/lib/pdf";
 import type { ChatMessage } from "@/types/chat";
@@ -346,15 +358,17 @@ export default function MockInterviewPage() {
 
   if (!setup) {
     return (
-      <div className="mx-auto max-w-lg p-6">
-        <h1 className="mb-1 text-xl font-semibold">Mock Interview Setup</h1>
-        <p className="mb-6 text-sm text-neutral-500">
-          A Staff QA Engineer persona will ask questions one at a time, evaluate each answer, and
-          end with a Hire / No-Hire scorecard.
-        </p>
-        <div className="space-y-4">
-          <div>
-            <label className="mb-1 block text-sm font-medium">Target Role</label>
+      <div className="mx-auto max-w-2xl p-6">
+        <PageHero
+          icon={Mic}
+          eyebrow="Live Practice"
+          title="Mock Interview Setup"
+          description="A Staff QA Engineer persona will ask questions one at a time, evaluate each answer, and end with a Hire / No-Hire scorecard."
+          tagline="Speak Up. Stand Out."
+          color="emerald"
+        />
+        <div className="mt-6 rounded-2xl border border-neutral-200 p-5 dark:border-neutral-800 sm:p-6">
+          <StepSection step={1} title="Target Role">
             <input
               value={form.role}
               onChange={(e) => setForm({ ...form, role: e.target.value })}
@@ -372,9 +386,8 @@ export default function MockInterviewPage() {
                 </button>
               ))}
             </div>
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">Experience Level</label>
+          </StepSection>
+          <StepSection step={2} title="Experience Level">
             <input
               value={form.experience}
               onChange={(e) => setForm({ ...form, experience: e.target.value })}
@@ -392,9 +405,8 @@ export default function MockInterviewPage() {
                 </button>
               ))}
             </div>
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">Focus Domain</label>
+          </StepSection>
+          <StepSection step={3} title="Focus Domain">
             <input
               value={form.focus}
               onChange={(e) => setForm({ ...form, focus: e.target.value })}
@@ -412,9 +424,9 @@ export default function MockInterviewPage() {
                 </button>
               ))}
             </div>
-          </div>
+          </StepSection>
 
-          <details className="rounded-lg border border-neutral-300 dark:border-neutral-700">
+          <details className="mt-6 rounded-lg border border-neutral-300 dark:border-neutral-700">
             <summary className="cursor-pointer select-none px-3 py-2 text-sm font-medium">
               Advanced options
             </summary>
@@ -429,7 +441,7 @@ export default function MockInterviewPage() {
                       onClick={() => setForm({ ...form, numQuestions: n })}
                       className={`rounded-full border px-2.5 py-1 text-xs ${
                         form.numQuestions === n
-                          ? "border-blue-600 bg-blue-600 text-white"
+                          ? "border-primary bg-primary text-white"
                           : "border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800"
                       }`}
                     >
@@ -448,7 +460,7 @@ export default function MockInterviewPage() {
                       onClick={() => setForm({ ...form, difficulty: d })}
                       className={`rounded-full border px-2.5 py-1 text-xs ${
                         form.difficulty === d
-                          ? "border-blue-600 bg-blue-600 text-white"
+                          ? "border-primary bg-primary text-white"
                           : "border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800"
                       }`}
                     >
@@ -469,7 +481,7 @@ export default function MockInterviewPage() {
                       onClick={() => setForm({ ...form, secondsPerQuestion: t.seconds })}
                       className={`rounded-full border px-2.5 py-1 text-xs ${
                         form.secondsPerQuestion === t.seconds
-                          ? "border-blue-600 bg-blue-600 text-white"
+                          ? "border-primary bg-primary text-white"
                           : "border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800"
                       }`}
                     >
@@ -490,8 +502,9 @@ export default function MockInterviewPage() {
           <button
             type="button"
             onClick={handleStart}
-            className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white"
+            className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-transform hover:scale-[1.01]"
           >
+            <Play className="h-4 w-4" aria-hidden />
             Start Interview
           </button>
         </div>
@@ -526,7 +539,8 @@ export default function MockInterviewPage() {
                   : "border-neutral-300 dark:border-neutral-700"
               }`}
             >
-              ⏱ {formatTime(questionSecondsLeft)}
+              <Timer className="inline h-3.5 w-3.5 -translate-y-px" aria-hidden />{" "}
+              {formatTime(questionSecondsLeft)}
             </div>
           )}
           {speechSupported && (
@@ -536,7 +550,7 @@ export default function MockInterviewPage() {
                 checked={voiceMode}
                 onChange={(e) => setVoiceMode(e.target.checked)}
               />
-              🎙️ Voice
+              <Mic className="h-3.5 w-3.5" aria-hidden /> Voice
             </label>
           )}
           {hasAssistantMessage && (
@@ -548,9 +562,9 @@ export default function MockInterviewPage() {
                   visibleMessages.map((m) => ({ role: m.role, content: m.content }))
                 )
               }
-              className="text-sm text-neutral-500 hover:underline"
+              className="flex items-center gap-1 text-sm text-neutral-500 hover:underline"
             >
-              📄 PDF
+              <FileDown className="h-3.5 w-3.5" aria-hidden /> PDF
             </button>
           )}
           <button
@@ -573,24 +587,38 @@ export default function MockInterviewPage() {
               <button
                 type="button"
                 onClick={speaking ? handlePauseResume : handleReplay}
-                className="rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-1.5 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800"
+                className="flex items-center gap-1.5 rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-1.5 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800"
               >
-                {speaking ? (speechPaused ? "▶ Resume" : "⏸ Pause") : "▶ Play question"}
+                {speaking ? (
+                  speechPaused ? (
+                    <>
+                      <Play className="h-3.5 w-3.5" aria-hidden /> Resume
+                    </>
+                  ) : (
+                    <>
+                      <Pause className="h-3.5 w-3.5" aria-hidden /> Pause
+                    </>
+                  )
+                ) : (
+                  <>
+                    <Play className="h-3.5 w-3.5" aria-hidden /> Play question
+                  </>
+                )}
               </button>
               <button
                 type="button"
                 onClick={handleStopSpeaking}
                 disabled={!speaking}
-                className="rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-1.5 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800 disabled:opacity-40"
+                className="flex items-center gap-1.5 rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-1.5 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800 disabled:opacity-40"
               >
-                ⏹ Stop
+                <Square className="h-3.5 w-3.5" aria-hidden /> Stop
               </button>
               <button
                 type="button"
                 onClick={handleReplay}
-                className="rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-1.5 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800"
+                className="flex items-center gap-1.5 rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-1.5 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800"
               >
-                🔁 Replay
+                <RotateCcw className="h-3.5 w-3.5" aria-hidden /> Replay
               </button>
             </div>
             {renderVoiceSettings()}
@@ -600,14 +628,22 @@ export default function MockInterviewPage() {
 
       <div className="mb-3 h-1.5 w-full overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-800">
         <div
-          className="h-full rounded-full bg-blue-600 transition-all"
+          className="h-full rounded-full bg-primary transition-all"
           style={{ width: `${progressPct}%` }}
         />
       </div>
 
       <div className="flex-1 space-y-3 overflow-y-auto rounded-xl border border-neutral-200 dark:border-neutral-800 p-4">
-        {visibleMessages.map((m) => (
-          <MessageBubble key={m.id} message={m} />
+        {visibleMessages.map((m, i) => (
+          <MessageBubble
+            key={m.id}
+            message={m}
+            bookmark={
+              m.role === "assistant"
+                ? { module: "MOCK", question: visibleMessages[i - 1]?.content ?? `Mock interview — ${setup.role}` }
+                : undefined
+            }
+          />
         ))}
         {loading && <TypingIndicator label="Interviewer is typing…" />}
         {error && (
@@ -641,7 +677,7 @@ export default function MockInterviewPage() {
                 : "border-neutral-300 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800"
             }`}
           >
-            {listening ? "⏹️" : "🎤"}
+            {listening ? <MicOff className="h-4 w-4" aria-hidden /> : <Mic className="h-4 w-4" aria-hidden />}
           </button>
         )}
         <textarea
@@ -656,13 +692,13 @@ export default function MockInterviewPage() {
           }}
           placeholder="Type your answer…"
           rows={1}
-          className="flex-1 resize-none rounded-lg border border-neutral-300 dark:border-neutral-700 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 resize-none rounded-lg border border-neutral-300 dark:border-neutral-700 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
         <button
           type="button"
           onClick={() => handleSend()}
           disabled={loading}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+          className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
         >
           Send
         </button>

@@ -10,8 +10,17 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
-import { countMessagesByModule, getActivityByDay, type ChatModule } from "@/lib/repo";
+import {
+  countBookmarks,
+  countMessagesByModule,
+  getActivityByDay,
+  listExamsForUser,
+  type ChatModule,
+} from "@/lib/repo";
+import { computeEarnedAchievements } from "@/lib/achievements";
+import { computeStreak } from "@/lib/streak";
 import ActivityChart from "@/components/ActivityChart";
+import AchievementBadges from "@/components/AchievementBadges";
 import DashboardFilters from "@/components/DashboardFilters";
 import DashboardIllustration from "@/components/DashboardIllustration";
 import MiniBars from "@/components/MiniBars";
@@ -20,19 +29,6 @@ const RANGE_OPTIONS = [7, 14, 30, 90];
 
 function fmt(date: Date): string {
   return date.toISOString().slice(0, 10);
-}
-
-function computeStreak(countsByDay: Map<string, number>): number {
-  const cursor = new Date();
-  if ((countsByDay.get(fmt(cursor)) ?? 0) === 0) {
-    cursor.setUTCDate(cursor.getUTCDate() - 1);
-  }
-  let streak = 0;
-  while ((countsByDay.get(fmt(cursor)) ?? 0) > 0) {
-    streak++;
-    cursor.setUTCDate(cursor.getUTCDate() - 1);
-  }
-  return streak;
 }
 
 /** Sum of counts for the `days` calendar days ending `offset` days ago. */
@@ -60,7 +56,7 @@ export default async function DashboardPage({
   const moduleFilter: "all" | ChatModule =
     params.module === "STUDY" || params.module === "MOCK" ? params.module : "all";
 
-  const [studyCount, mockCount, allActivity, studyActivity, mockActivity, chartActivity] =
+  const [studyCount, mockCount, allActivity, studyActivity, mockActivity, chartActivity, exams, bookmarkCount] =
     await Promise.all([
       countMessagesByModule(user.sub, "STUDY"),
       countMessagesByModule(user.sub, "MOCK"),
@@ -68,6 +64,8 @@ export default async function DashboardPage({
       getActivityByDay(user.sub, "STUDY", 14),
       getActivityByDay(user.sub, "MOCK", 14),
       getActivityByDay(user.sub, moduleFilter === "all" ? undefined : moduleFilter, range),
+      listExamsForUser(user.sub, 100),
+      countBookmarks(user.sub),
     ]);
 
   const chartCountsByDay = new Map(chartActivity.map((a) => [a.day, a.count]));
@@ -79,12 +77,23 @@ export default async function DashboardPage({
     chartDays.push({ day, count: chartCountsByDay.get(day) ?? 0 });
     cursor.setUTCDate(cursor.getUTCDate() + 1);
   }
-  const streak = computeStreak(new Map(allActivity.map((a) => [a.day, a.count])));
+  const streak = computeStreak(allActivity);
 
   const studyByDay = new Map(studyActivity.map((a) => [a.day, a.count]));
   const mockByDay = new Map(mockActivity.map((a) => [a.day, a.count]));
   const studyThisWeek = sumWindow(studyByDay, 7, 0);
   const mockThisWeek = sumWindow(mockByDay, 7, 0);
+
+  const examPcts = exams.filter((e) => e.total > 0).map((e) => (e.score / e.total) * 100);
+  const earnedAchievements = computeEarnedAchievements({
+    studyCount,
+    mockCount,
+    examCount: exams.length,
+    bestExamPct: examPcts.length > 0 ? Math.max(...examPcts) : 0,
+    perfectExamCount: exams.filter((e) => e.total > 0 && e.score === e.total).length,
+    streak,
+    bookmarkCount,
+  });
 
   return (
     <div className="mx-auto w-full max-w-4xl px-6 py-10">
@@ -161,6 +170,8 @@ export default async function DashboardPage({
         </div>
         <ActivityChart data={chartDays} />
       </div>
+
+      <AchievementBadges earned={earnedAchievements} />
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Link

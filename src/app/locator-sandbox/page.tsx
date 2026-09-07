@@ -1,8 +1,10 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { CheckCircle2, Paperclip, Search, XCircle } from "lucide-react";
 import { readImageFile, type ReadImageResult } from "@/lib/image";
 import type { LocatorSandboxResult } from "@/app/api/locator-sandbox/route";
+import PageHero from "@/components/PageHero";
 
 export default function LocatorSandboxPage() {
   const [html, setHtml] = useState("");
@@ -47,19 +49,22 @@ export default function LocatorSandboxPage() {
 
   return (
     <div className="mx-auto w-full max-w-4xl px-6 py-10">
-      <h1 className="text-xl font-semibold">DOM / Locator Sandbox</h1>
-      <p className="mt-1 text-sm text-neutral-500">
-        Paste a raw HTML snippet, or attach a UI screenshot / DOM inspector screenshot. We&apos;ll
-        flag fragile selectors and suggest self-healing replacements.
-      </p>
+      <PageHero
+        icon={Search}
+        eyebrow="Automation Skill"
+        title="DOM / Locator Sandbox"
+        description="Paste a raw HTML snippet, or attach a UI screenshot / DOM inspector screenshot. We'll flag fragile selectors and suggest self-healing replacements."
+        tagline="Build Locators That Last."
+        color="rose"
+      />
 
-      <form onSubmit={handleSubmit} className="mt-6 space-y-3">
+      <form onSubmit={handleSubmit} className="mt-6 space-y-3 rounded-2xl border border-neutral-200 p-5 dark:border-neutral-800 sm:p-6">
         <textarea
           value={html}
           onChange={(e) => setHtml(e.target.value)}
           rows={8}
           placeholder='e.g. <button class="btn primary-8f3a1">Submit</button>'
-          className="w-full rounded-lg border border-neutral-300 dark:border-neutral-700 bg-transparent px-3 py-2 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full rounded-lg border border-neutral-300 dark:border-neutral-700 bg-transparent px-3 py-2 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-primary"
         />
 
         <div className="flex items-center gap-2">
@@ -73,9 +78,10 @@ export default function LocatorSandboxPage() {
           />
           <label
             htmlFor="sandbox-image-upload"
-            className="cursor-pointer rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-2 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800"
+            className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-2 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800"
           >
-            📎 Attach screenshot
+            <Paperclip className="h-3.5 w-3.5" aria-hidden />
+            Attach screenshot
           </label>
           {pendingImage && (
             <>
@@ -96,8 +102,9 @@ export default function LocatorSandboxPage() {
           <button
             type="submit"
             disabled={loading}
-            className="ml-auto rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+            className="ml-auto flex items-center gap-2 rounded-lg bg-gradient-to-r from-rose-500 to-pink-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-transform hover:scale-[1.01] disabled:opacity-50"
           >
+            <Search className="h-4 w-4" aria-hidden />
             {loading ? "Analyzing…" : "Audit locators"}
           </button>
         </div>
@@ -115,8 +122,16 @@ export default function LocatorSandboxPage() {
             <thead className="border-b border-neutral-200 dark:border-neutral-800 text-neutral-500">
               <tr>
                 <th className="px-4 py-2 font-medium">Element</th>
-                <th className="px-4 py-2 font-medium">❌ Avoid</th>
-                <th className="px-4 py-2 font-medium">✅ Use instead</th>
+                <th className="px-4 py-2 font-medium">
+                  <span className="flex items-center gap-1">
+                    <XCircle className="h-3.5 w-3.5 text-red-500" aria-hidden /> Avoid
+                  </span>
+                </th>
+                <th className="px-4 py-2 font-medium">
+                  <span className="flex items-center gap-1">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-green-600" aria-hidden /> Use instead
+                  </span>
+                </th>
                 <th className="px-4 py-2 font-medium">Why</th>
               </tr>
             </thead>

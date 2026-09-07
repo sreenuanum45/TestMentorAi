@@ -9,9 +9,10 @@ import { listExamsForUser } from "@/lib/repo";
 const THEME_INIT_SCRIPT = `
 (function () {
   try {
-    var stored = localStorage.getItem("theme");
-    var isDark = stored ? stored === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
-    document.documentElement.classList.toggle("dark", isDark);
+    var DARK_THEMES = ["dark", "navy", "forest", "sunset", "aurora"];
+    var theme = localStorage.getItem("theme") || "light";
+    document.documentElement.classList.toggle("dark", DARK_THEMES.indexOf(theme) !== -1);
+    document.documentElement.setAttribute("data-theme", theme);
   } catch (e) {}
 })();
 `;
@@ -44,8 +45,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      // The pre-paint theme script below adds a `dark` class before React hydrates,
-      // which intentionally differs from the server-rendered class attribute.
+      // The pre-paint theme script below sets the `dark` class and `data-theme`
+      // attribute before React hydrates, intentionally differing from the
+      // server-rendered markup.
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >

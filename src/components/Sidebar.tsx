@@ -4,13 +4,17 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   BookOpen,
+  Bookmark,
   ClipboardList,
+  Code2,
   FileText,
   GraduationCap,
   HelpCircle,
+  History,
   Home,
   LogOut,
   Mic,
+  NotebookPen,
   Repeat,
   Search,
   Settings,
@@ -24,12 +28,16 @@ import type { Role } from "@/lib/repo";
 const PRIMARY_LINKS = [
   { href: "/dashboard", label: "Dashboard", icon: Home },
   { href: "/review", label: "Review", icon: Repeat },
+  { href: "/exams", label: "Exam History", icon: History },
+  { href: "/saved", label: "Saved", icon: Bookmark },
+  { href: "/notes", label: "Notes", icon: NotebookPen },
 ];
 
 const TOOL_LINKS = [
   { href: "/study", label: "Study Companion", icon: BookOpen },
   { href: "/mock-interview", label: "Mock Interviewer", icon: Mic },
   { href: "/exam", label: "Timed Exam", icon: ClipboardList },
+  { href: "/coding", label: "Coding Practice", icon: Code2 },
   { href: "/resume-questions", label: "Resume Questions", icon: FileText },
   { href: "/locator-sandbox", label: "Locator Sandbox", icon: Search },
 ];
@@ -54,13 +62,21 @@ function NavLink({
   return (
     <Link
       href={href}
-      className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${
+      className={`group flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm transition-all ${
         active
-          ? "bg-gradient-to-r from-blue-600 to-indigo-600 font-medium text-white shadow-sm"
-          : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
+          ? "bg-primary font-medium text-white shadow-sm"
+          : "text-neutral-600 hover:translate-x-0.5 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
       }`}
     >
-      <Icon className="h-4 w-4 shrink-0" aria-hidden />
+      <span
+        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg transition-colors ${
+          active
+            ? "bg-white/15"
+            : "bg-neutral-100 text-neutral-500 group-hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:group-hover:bg-neutral-700"
+        }`}
+      >
+        <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden />
+      </span>
       {label}
     </Link>
   );
@@ -77,12 +93,17 @@ export default function Sidebar({ user }: { user: { email: string; role: Role } 
   }
 
   return (
-    <aside className="hidden w-64 shrink-0 flex-col border-r border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950 md:flex">
+    <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col overflow-y-auto border-r border-border-subtle bg-surface p-4 md:flex">
       <Link href="/" className="mb-6 flex items-center gap-2.5 px-1">
-        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-white">
           <GraduationCap className="h-5 w-5" aria-hidden />
         </span>
-        <span className="text-lg font-bold">TestMentor AI</span>
+        <span>
+          <span className="block text-lg font-bold leading-tight">TestMentor AI</span>
+          <span className="block text-[11px] leading-tight text-neutral-400">
+            Practice. Prepare. Progress.
+          </span>
+        </span>
       </Link>
 
       <nav className="flex flex-1 flex-col gap-1">
@@ -93,7 +114,8 @@ export default function Sidebar({ user }: { user: { email: string; role: Role } 
           <NavLink href="/admin" label="Admin" icon={Wrench} active={pathname === "/admin"} />
         )}
 
-        <div className="mb-1 mt-5 px-3 text-xs font-medium uppercase tracking-wide text-neutral-400">
+        <div className="mb-1 mt-5 flex items-center gap-1.5 px-2.5 text-xs font-semibold uppercase tracking-wide text-neutral-400">
+          <span className="h-1 w-1 rounded-full bg-neutral-300 dark:bg-neutral-600" aria-hidden />
           Learning Tools
         </div>
         {TOOL_LINKS.map((l) => (
@@ -101,7 +123,7 @@ export default function Sidebar({ user }: { user: { email: string; role: Role } 
         ))}
       </nav>
 
-      <div className="flex flex-col gap-1 border-t border-neutral-200 pt-3 dark:border-neutral-800">
+      <div className="flex flex-col gap-1 border-t border-border-subtle pt-3">
         {ACCOUNT_LINKS.map((l) => (
           <NavLink key={l.href} {...l} active={pathname === l.href} />
         ))}
@@ -125,9 +147,11 @@ export default function Sidebar({ user }: { user: { email: string; role: Role } 
       <button
         type="button"
         onClick={handleLogout}
-        className="mt-3 flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
+        className="mt-3 flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
       >
-        <LogOut className="h-4 w-4" aria-hidden />
+        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
+          <LogOut className="h-3.5 w-3.5" aria-hidden />
+        </span>
         Log out
       </button>
     </aside>

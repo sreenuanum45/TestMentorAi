@@ -64,6 +64,28 @@ export async function ensureSchema(): Promise<void> {
       )
     `;
     await sql`CREATE INDEX IF NOT EXISTS idx_exams_user ON exams(user_id)`;
+    await sql`
+      CREATE TABLE IF NOT EXISTS bookmarks (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        module TEXT NOT NULL,
+        question TEXT NOT NULL,
+        answer TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+      )
+    `;
+    await sql`CREATE INDEX IF NOT EXISTS idx_bookmarks_user ON bookmarks(user_id)`;
+    await sql`
+      CREATE TABLE IF NOT EXISTS user_notes (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        title TEXT NOT NULL,
+        content TEXT NOT NULL,
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+        created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+      )
+    `;
+    await sql`CREATE INDEX IF NOT EXISTS idx_user_notes_user ON user_notes(user_id)`;
   })();
   return migrated;
 }

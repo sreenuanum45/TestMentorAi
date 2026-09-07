@@ -277,3 +277,101 @@ export async function listExamsForUser(userId: string, limit = 20): Promise<Exam
   `;
   return rows.map(parseExamRow);
 }
+
+export type BookmarkModule = "STUDY" | "MOCK" | "EXAM";
+
+export interface BookmarkRow {
+  id: string;
+  user_id: string;
+  module: BookmarkModule;
+  question: string;
+  answer: string | null;
+  created_at: Date;
+}
+
+export async function createBookmark(
+  userId: string,
+  bookmarkModule: BookmarkModule,
+  question: string,
+  answer: string | null
+): Promise<BookmarkRow> {
+  await ensureSchema();
+  const id = randomUUID();
+  const rows = await sql<BookmarkRow[]>`
+    INSERT INTO bookmarks (id, user_id, module, question, answer)
+    VALUES (${id}, ${userId}, ${bookmarkModule}, ${question}, ${answer})
+    RETURNING *
+  `;
+  return rows[0];
+}
+
+export async function listBookmarksForUser(userId: string, limit = 200): Promise<BookmarkRow[]> {
+  await ensureSchema();
+  return sql<BookmarkRow[]>`
+    SELECT * FROM bookmarks WHERE user_id = ${userId} ORDER BY created_at DESC LIMIT ${limit}
+  `;
+}
+
+export async function countBookmarks(userId: string): Promise<number> {
+  await ensureSchema();
+  const rows = await sql<{ n: number }[]>`
+    SELECT COUNT(*)::int as n FROM bookmarks WHERE user_id = ${userId}
+  `;
+  return rows[0]?.n ?? 0;
+}
+
+/** Scoped to userId so one user can never delete another's bookmark. */
+export async function deleteBookmark(id: string, userId: string): Promise<void> {
+  await ensureSchema();
+  await sql`DELETE FROM bookmarks WHERE id = ${id} AND user_id = ${userId}`;
+}
+
+export interface UserNoteRow {
+  id: string;
+  user_id: string;
+  title: string;
+  content: string;
+  updated_at: Date;
+  created_at: Date;
+}
+
+export async function listUserNotes(userId: string): Promise<UserNoteRow[]> {
+  await ensureSchema();
+  return sql<UserNoteRow[]>`
+    SELECT * FROM user_notes WHERE user_id = ${userId} ORDER BY updated_at DESC
+  `;
+}
+
+export async function createUserNote(
+  userId: string,
+  title: string,
+  content: string
+): Promise<UserNoteRow> {
+  await ensureSchema();
+  const id = randomUUID();
+  const rows = await sql<UserNoteRow[]>`
+    INSERT INTO user_notes (id, user_id, title, content)
+    VALUES (${id}, ${userId}, ${title}, ${content})
+    RETURNING *
+  `;
+  return rows[0];
+}
+
+/** Scoped to userId so one user can never edit another's note. */
+export async function updateUserNote(
+  id: string,
+  userId: string,
+  fields: { title: string; content: string }
+): Promise<void> {
+  await ensureSchema();
+  await sql`
+    UPDATE user_notes SET title = ${fields.title}, content = ${fields.content}, updated_at = now()
+    WHERE id = ${id} AND user_id = ${userId}
+  `;
+}
+
+/** Scoped to userId so one user can never delete another's note. */
+export async function deleteUserNote(id: string, userId: string): Promise<void> {
+  await ensureSchema();
+  await sql`DELETE FROM user_notes WHERE id = ${id} AND user_id = ${userId}`;
+}

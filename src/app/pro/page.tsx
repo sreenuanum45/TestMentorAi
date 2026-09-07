@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Sparkles, Zap, BarChart3, Infinity as InfinityIcon } from "lucide-react";
+import PageHero from "@/components/PageHero";
 
 const PLANNED_FEATURES = [
   {
@@ -21,17 +22,17 @@ const PLANNED_FEATURES = [
 
 export default function ProPage() {
   return (
-    <div className="mx-auto w-full max-w-2xl px-6 py-10 text-center">
-      <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-white">
-        <Sparkles className="h-7 w-7" aria-hidden />
-      </span>
-      <h1 className="mt-4 text-2xl font-bold">TestMentor AI Pro</h1>
-      <p className="mt-2 text-neutral-500">
-        There&apos;s no paid plan yet — this is a preview of what a Pro tier could include. Nothing
-        here is active or billed.
-      </p>
+    <div className="mx-auto w-full max-w-2xl px-6 py-10">
+      <PageHero
+        icon={Sparkles}
+        eyebrow="Preview"
+        title="TestMentor AI Pro"
+        description="There's no paid plan yet — this is a preview of what a Pro tier could include. Nothing here is active or billed."
+        tagline="Go Further. Prep Smarter."
+        color="amber"
+      />
 
-      <div className="mt-8 space-y-3 text-left">
+      <div className="mt-6 space-y-3">
         {PLANNED_FEATURES.map((f) => (
           <div
             key={f.title}

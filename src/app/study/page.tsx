@@ -2,7 +2,9 @@
 
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { BookOpen, Paintbrush, Paperclip } from "lucide-react";
 import MessageBubble from "@/components/MessageBubble";
+import PageHeader from "@/components/PageHeader";
 import TypingIndicator from "@/components/TypingIndicator";
 import { readImageFile, type ReadImageResult } from "@/lib/image";
 import type { ChatMessage } from "@/types/chat";
@@ -155,13 +157,12 @@ function StudyCompanion() {
 
   return (
     <div className="mx-auto flex h-[calc(100vh-4rem)] w-full max-w-3xl flex-col p-4">
-      <div className="mb-4">
-        <h1 className="text-xl font-semibold">Study Companion</h1>
-        <p className="text-sm text-neutral-500">
-          Ask any QA interview question, or attach a bug screenshot / DOM snippet for locator
-          and defect analysis.
-        </p>
-      </div>
+      <PageHeader
+        icon={BookOpen}
+        title="Study Companion"
+        description="Ask any QA interview question, or attach a bug screenshot / DOM snippet for locator and defect analysis."
+        color="blue"
+      />
 
       <div
         onDragOver={(e) => {
@@ -172,7 +173,7 @@ function StudyCompanion() {
         onDrop={handleDrop}
         className={`flex-1 space-y-3 overflow-y-auto rounded-xl border p-4 transition-colors ${
           dragActive
-            ? "border-blue-500 bg-blue-50 dark:bg-blue-950/30"
+            ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30"
             : "border-neutral-200 dark:border-neutral-800"
         }`}
       >
@@ -192,12 +193,17 @@ function StudyCompanion() {
             </div>
           </div>
         )}
-        {messages.map((m) => (
+        {messages.map((m, i) => (
           <MessageBubble
             key={m.id}
             message={m}
             onGenerateImage={handleGenerateImage}
             imageGenerating={generatingImageId === m.id}
+            bookmark={
+              m.role === "assistant"
+                ? { module: "STUDY", question: messages[i - 1]?.content ?? "Study Companion answer" }
+                : undefined
+            }
           />
         ))}
         {loading && <TypingIndicator label="TestMentor AI is thinking…" />}
@@ -217,7 +223,7 @@ function StudyCompanion() {
         )}
         {imageError && (
           <div className="flex items-start gap-2 rounded-lg border border-amber-300 bg-amber-50 p-2.5 text-xs text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
-            <span>🎨</span>
+            <Paintbrush className="h-4 w-4 shrink-0" aria-hidden />
             <span>{imageError}</span>
             <button
               type="button"
@@ -261,9 +267,9 @@ function StudyCompanion() {
         <label
           htmlFor="image-upload"
           title="Attach a screenshot"
-          className="cursor-pointer rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-2 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800"
+          className="flex cursor-pointer items-center rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-2 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800"
         >
-          📎
+          <Paperclip className="h-4 w-4" aria-hidden />
         </label>
         <textarea
           ref={textareaRef}
@@ -277,13 +283,13 @@ function StudyCompanion() {
           }}
           placeholder="Ask a QA interview question…"
           rows={1}
-          className="flex-1 resize-none rounded-lg border border-neutral-300 dark:border-neutral-700 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 resize-none rounded-lg border border-neutral-300 dark:border-neutral-700 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
         <button
           type="button"
           onClick={() => sendMessage(input)}
           disabled={loading}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+          className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
         >
           Send
         </button>
