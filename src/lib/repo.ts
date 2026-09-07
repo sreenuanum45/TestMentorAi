@@ -375,3 +375,35 @@ export async function deleteUserNote(id: string, userId: string): Promise<void> 
   await ensureSchema();
   await sql`DELETE FROM user_notes WHERE id = ${id} AND user_id = ${userId}`;
 }
+
+export async function hasCompletedDailyChallenge(userId: string, date: string): Promise<boolean> {
+  await ensureSchema();
+  const rows = await sql<{ id: string }[]>`
+    SELECT id FROM daily_challenge_log WHERE user_id = ${userId} AND challenge_date = ${date}
+  `;
+  return rows.length > 0;
+}
+
+export async function markDailyChallengeComplete(userId: string, date: string): Promise<void> {
+  await ensureSchema();
+  await sql`
+    INSERT INTO daily_challenge_log (id, user_id, challenge_date)
+    VALUES (${randomUUID()}, ${userId}, ${date})
+    ON CONFLICT (user_id, challenge_date) DO NOTHING
+  `;
+}
+
+export async function getDailyChallengeActivity(
+  userId: string,
+  limit = 60
+): Promise<{ day: string; count: number }[]> {
+  await ensureSchema();
+  const rows = await sql<{ challenge_date: string }[]>`
+    SELECT challenge_date FROM daily_challenge_log
+    WHERE user_id = ${userId}
+    ORDER BY challenge_date DESC
+    LIMIT ${limit}
+  `;
+  return rows.map((r) => ({ day: r.challenge_date, count: 1 }));
+}
+

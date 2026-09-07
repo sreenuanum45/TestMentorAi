@@ -19,11 +19,13 @@ import {
 } from "@/lib/repo";
 import { computeEarnedAchievements } from "@/lib/achievements";
 import { computeStreak } from "@/lib/streak";
+import { computeReadiness } from "@/lib/readiness";
 import ActivityChart from "@/components/ActivityChart";
 import AchievementBadges from "@/components/AchievementBadges";
 import DashboardFilters from "@/components/DashboardFilters";
 import DashboardIllustration from "@/components/DashboardIllustration";
 import MiniBars from "@/components/MiniBars";
+import ReadinessScore from "@/components/ReadinessScore";
 
 const RANGE_OPTIONS = [7, 14, 30, 90];
 
@@ -94,6 +96,13 @@ export default async function DashboardPage({
     streak,
     bookmarkCount,
   });
+  const readiness = computeReadiness({
+    studyCount,
+    mockCount,
+    examCount: exams.length,
+    avgExamPct: examPcts.length > 0 ? examPcts.reduce((a, b) => a + b, 0) / examPcts.length : 0,
+    streak,
+  });
 
   return (
     <div className="mx-auto w-full max-w-4xl px-6 py-10">
@@ -110,6 +119,8 @@ export default async function DashboardPage({
           Your career journey starts here
         </p>
       </div>
+
+      <ReadinessScore result={readiness} />
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="rounded-xl bg-blue-50 p-4 dark:bg-blue-950/30">

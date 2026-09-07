@@ -5,13 +5,16 @@ import { useRouter } from "next/navigation";
 import {
   BookOpen,
   Bookmark,
+  CalendarCheck,
   ClipboardList,
   Code2,
+  FileSearch,
   FileText,
   Search,
   History,
   Home,
   HelpCircle,
+  Mail,
   Mic,
   NotebookPen,
   Repeat,
@@ -23,22 +26,42 @@ import {
 } from "lucide-react";
 import type { Role } from "@/lib/repo";
 
-const PAGES: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "/dashboard", label: "Dashboard", icon: Home },
-  { href: "/review", label: "Review", icon: Repeat },
-  { href: "/exams", label: "Exam History", icon: History },
-  { href: "/saved", label: "Saved", icon: Bookmark },
-  { href: "/notes", label: "Notes", icon: NotebookPen },
-  { href: "/study", label: "Study Companion", icon: BookOpen },
-  { href: "/mock-interview", label: "Mock Interviewer", icon: Mic },
-  { href: "/exam", label: "Timed Exam", icon: ClipboardList },
-  { href: "/coding", label: "Coding Practice", icon: Code2 },
-  { href: "/resume-questions", label: "Resume Questions", icon: FileText },
-  { href: "/locator-sandbox", label: "Locator Sandbox", icon: Search },
-  { href: "/profile", label: "Profile", icon: User },
-  { href: "/settings", label: "Settings", icon: Settings },
-  { href: "/help", label: "Help & Support", icon: HelpCircle },
-  { href: "/pro", label: "Upgrade to Pro", icon: Sparkles },
+const ICON_TEXT_COLORS = {
+  blue: "text-blue-500 dark:text-blue-400",
+  emerald: "text-emerald-500 dark:text-emerald-400",
+  orange: "text-orange-500 dark:text-orange-400",
+  cyan: "text-cyan-500 dark:text-cyan-400",
+  violet: "text-violet-500 dark:text-violet-400",
+  rose: "text-rose-500 dark:text-rose-400",
+  indigo: "text-indigo-500 dark:text-indigo-400",
+  amber: "text-amber-500 dark:text-amber-400",
+  teal: "text-teal-500 dark:text-teal-400",
+  pink: "text-pink-500 dark:text-pink-400",
+  sky: "text-sky-500 dark:text-sky-400",
+  slate: "text-slate-500 dark:text-slate-400",
+} as const;
+
+type IconColor = keyof typeof ICON_TEXT_COLORS;
+
+const PAGES: { href: string; label: string; icon: LucideIcon; color: IconColor }[] = [
+  { href: "/dashboard", label: "Dashboard", icon: Home, color: "indigo" },
+  { href: "/daily-challenge", label: "Daily Challenge", icon: CalendarCheck, color: "orange" },
+  { href: "/review", label: "Review", icon: Repeat, color: "amber" },
+  { href: "/exams", label: "Exam History", icon: History, color: "teal" },
+  { href: "/saved", label: "Saved", icon: Bookmark, color: "pink" },
+  { href: "/notes", label: "Notes", icon: NotebookPen, color: "sky" },
+  { href: "/study", label: "Study Companion", icon: BookOpen, color: "blue" },
+  { href: "/mock-interview", label: "Mock Interviewer", icon: Mic, color: "emerald" },
+  { href: "/exam", label: "Timed Exam", icon: ClipboardList, color: "orange" },
+  { href: "/coding", label: "Coding Practice", icon: Code2, color: "cyan" },
+  { href: "/resume-questions", label: "Resume Questions", icon: FileText, color: "violet" },
+  { href: "/resume-review", label: "Resume Reviewer", icon: FileSearch, color: "teal" },
+  { href: "/cover-letter", label: "Cover Letter", icon: Mail, color: "pink" },
+  { href: "/locator-sandbox", label: "Locator Sandbox", icon: Search, color: "rose" },
+  { href: "/profile", label: "Profile", icon: User, color: "violet" },
+  { href: "/settings", label: "Settings", icon: Settings, color: "slate" },
+  { href: "/help", label: "Help & Support", icon: HelpCircle, color: "emerald" },
+  { href: "/pro", label: "Upgrade to Pro", icon: Sparkles, color: "amber" },
 ];
 
 export default function GlobalSearch({ role }: { role: Role }) {
@@ -48,7 +71,8 @@ export default function GlobalSearch({ role }: { role: Role }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const pages = role === "ADMIN" ? [...PAGES, { href: "/admin", label: "Admin", icon: Wrench }] : PAGES;
+  const pages =
+    role === "ADMIN" ? [...PAGES, { href: "/admin", label: "Admin", icon: Wrench, color: "slate" as const }] : PAGES;
   const filtered = query.trim()
     ? pages.filter((p) => p.label.toLowerCase().includes(query.trim().toLowerCase()))
     : pages;
@@ -157,7 +181,7 @@ export default function GlobalSearch({ role }: { role: Role }) {
                       : ""
                   }`}
                 >
-                  <p.icon className="h-4 w-4" aria-hidden />
+                  <p.icon className={`h-4 w-4 shrink-0 ${ICON_TEXT_COLORS[p.color]}`} aria-hidden />
                   {p.label}
                 </button>
               ))}

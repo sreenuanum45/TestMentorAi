@@ -4,7 +4,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { BookOpen, Paintbrush, Paperclip } from "lucide-react";
 import MessageBubble from "@/components/MessageBubble";
-import PageHeader from "@/components/PageHeader";
+import PageHero from "@/components/PageHero";
 import TypingIndicator from "@/components/TypingIndicator";
 import { readImageFile, type ReadImageResult } from "@/lib/image";
 import type { ChatMessage } from "@/types/chat";
@@ -156,11 +156,13 @@ function StudyCompanion() {
   }
 
   return (
-    <div className="mx-auto flex h-[calc(100vh-4rem)] w-full max-w-3xl flex-col p-4">
-      <PageHeader
+    <div className="mx-auto flex h-[calc(100vh-4rem)] w-full max-w-3xl flex-col gap-4 p-4">
+      <PageHero
         icon={BookOpen}
+        eyebrow="Ask Anything"
         title="Study Companion"
         description="Ask any QA interview question, or attach a bug screenshot / DOM snippet for locator and defect analysis."
+        tagline="Learn Deeper. Interview Smarter."
         color="blue"
       />
 

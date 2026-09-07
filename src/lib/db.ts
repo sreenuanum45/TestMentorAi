@@ -86,6 +86,16 @@ export async function ensureSchema(): Promise<void> {
       )
     `;
     await sql`CREATE INDEX IF NOT EXISTS idx_user_notes_user ON user_notes(user_id)`;
+    await sql`
+      CREATE TABLE IF NOT EXISTS daily_challenge_log (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        challenge_date TEXT NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+        UNIQUE (user_id, challenge_date)
+      )
+    `;
+    await sql`CREATE INDEX IF NOT EXISTS idx_daily_challenge_log_user ON daily_challenge_log(user_id)`;
   })();
   return migrated;
 }

@@ -7,29 +7,58 @@ import {
   Bell,
   BookOpen,
   Bookmark,
+  CalendarCheck,
   ChevronDown,
   ClipboardList,
   Code2,
+  FileSearch,
   FileText,
   GraduationCap,
+  HelpCircle,
   History,
+  Home,
+  LogOut,
+  Mail,
   Mic,
   NotebookPen,
   Repeat,
   Search,
+  Settings,
   Sparkles,
+  User,
+  Wrench,
 } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import GlobalSearch from "@/components/GlobalSearch";
 import type { Role } from "@/lib/repo";
 
-const FEATURE_LINKS = [
-  { href: "/study", label: "Study Companion", icon: BookOpen },
-  { href: "/mock-interview", label: "Mock Interviewer", icon: Mic },
-  { href: "/exam", label: "Timed Exam", icon: ClipboardList },
-  { href: "/coding", label: "Coding Practice", icon: Code2 },
-  { href: "/resume-questions", label: "Resume Questions", icon: FileText },
-  { href: "/locator-sandbox", label: "Locator Sandbox", icon: Search },
+const ICON_TEXT_COLORS = {
+  blue: "text-blue-500 dark:text-blue-400",
+  emerald: "text-emerald-500 dark:text-emerald-400",
+  orange: "text-orange-500 dark:text-orange-400",
+  cyan: "text-cyan-500 dark:text-cyan-400",
+  violet: "text-violet-500 dark:text-violet-400",
+  rose: "text-rose-500 dark:text-rose-400",
+  indigo: "text-indigo-500 dark:text-indigo-400",
+  amber: "text-amber-500 dark:text-amber-400",
+  teal: "text-teal-500 dark:text-teal-400",
+  pink: "text-pink-500 dark:text-pink-400",
+  sky: "text-sky-500 dark:text-sky-400",
+  slate: "text-slate-500 dark:text-slate-400",
+} as const;
+
+const FEATURE_LINKS: {
+  href: string;
+  label: string;
+  icon: typeof BookOpen;
+  color: keyof typeof ICON_TEXT_COLORS;
+}[] = [
+  { href: "/study", label: "Study Companion", icon: BookOpen, color: "blue" },
+  { href: "/mock-interview", label: "Mock Interviewer", icon: Mic, color: "emerald" },
+  { href: "/exam", label: "Timed Exam", icon: ClipboardList, color: "orange" },
+  { href: "/coding", label: "Coding Practice", icon: Code2, color: "cyan" },
+  { href: "/resume-questions", label: "Resume Questions", icon: FileText, color: "violet" },
+  { href: "/locator-sandbox", label: "Locator Sandbox", icon: Search, color: "rose" },
 ];
 
 export interface Notification {
@@ -85,7 +114,10 @@ export default function TopBar({
                       : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
                   }`}
                 >
-                  <l.icon className="h-4 w-4 shrink-0" aria-hidden />
+                  <l.icon
+                    className={`h-4 w-4 shrink-0 ${active ? "text-white" : ICON_TEXT_COLORS[l.color]}`}
+                    aria-hidden
+                  />
                   <span className="hidden sm:inline">{l.label}</span>
                 </Link>
               );
@@ -165,14 +197,39 @@ export default function TopBar({
                       onClick={() => setMenuOpen(false)}
                       className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden"
                     >
+                      <Home className={`h-3.5 w-3.5 ${ICON_TEXT_COLORS.indigo}`} aria-hidden />
                       Dashboard
+                    </Link>
+                    <Link
+                      href="/daily-challenge"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden"
+                    >
+                      <CalendarCheck className={`h-3.5 w-3.5 ${ICON_TEXT_COLORS.orange}`} aria-hidden />
+                      Daily Challenge
+                    </Link>
+                    <Link
+                      href="/resume-review"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden"
+                    >
+                      <FileSearch className={`h-3.5 w-3.5 ${ICON_TEXT_COLORS.teal}`} aria-hidden />
+                      Resume Reviewer
+                    </Link>
+                    <Link
+                      href="/cover-letter"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden"
+                    >
+                      <Mail className={`h-3.5 w-3.5 ${ICON_TEXT_COLORS.pink}`} aria-hidden />
+                      Cover Letter
                     </Link>
                     <Link
                       href="/review"
                       onClick={() => setMenuOpen(false)}
                       className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden"
                     >
-                      <Repeat className="h-3.5 w-3.5" aria-hidden />
+                      <Repeat className={`h-3.5 w-3.5 ${ICON_TEXT_COLORS.amber}`} aria-hidden />
                       Review
                     </Link>
                     <Link
@@ -180,7 +237,7 @@ export default function TopBar({
                       onClick={() => setMenuOpen(false)}
                       className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden"
                     >
-                      <History className="h-3.5 w-3.5" aria-hidden />
+                      <History className={`h-3.5 w-3.5 ${ICON_TEXT_COLORS.teal}`} aria-hidden />
                       Exam History
                     </Link>
                     <Link
@@ -188,7 +245,7 @@ export default function TopBar({
                       onClick={() => setMenuOpen(false)}
                       className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden"
                     >
-                      <Bookmark className="h-3.5 w-3.5" aria-hidden />
+                      <Bookmark className={`h-3.5 w-3.5 ${ICON_TEXT_COLORS.pink}`} aria-hidden />
                       Saved
                     </Link>
                     <Link
@@ -196,28 +253,31 @@ export default function TopBar({
                       onClick={() => setMenuOpen(false)}
                       className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden"
                     >
-                      <NotebookPen className="h-3.5 w-3.5" aria-hidden />
+                      <NotebookPen className={`h-3.5 w-3.5 ${ICON_TEXT_COLORS.sky}`} aria-hidden />
                       Notes
                     </Link>
                     <Link
                       href="/profile"
                       onClick={() => setMenuOpen(false)}
-                      className="block px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden"
+                      className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden"
                     >
+                      <User className={`h-3.5 w-3.5 ${ICON_TEXT_COLORS.violet}`} aria-hidden />
                       Profile
                     </Link>
                     <Link
                       href="/settings"
                       onClick={() => setMenuOpen(false)}
-                      className="block px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden"
+                      className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden"
                     >
+                      <Settings className={`h-3.5 w-3.5 ${ICON_TEXT_COLORS.slate}`} aria-hidden />
                       Settings
                     </Link>
                     <Link
                       href="/help"
                       onClick={() => setMenuOpen(false)}
-                      className="block px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden"
+                      className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden"
                     >
+                      <HelpCircle className={`h-3.5 w-3.5 ${ICON_TEXT_COLORS.emerald}`} aria-hidden />
                       Help & Support
                     </Link>
                     <Link
@@ -232,16 +292,18 @@ export default function TopBar({
                       <Link
                         href="/admin"
                         onClick={() => setMenuOpen(false)}
-                        className="block px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden"
+                        className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden"
                       >
+                        <Wrench className={`h-3.5 w-3.5 ${ICON_TEXT_COLORS.slate}`} aria-hidden />
                         Admin
                       </Link>
                     )}
                     <button
                       type="button"
                       onClick={handleLogout}
-                      className="block w-full px-3 py-2 text-left text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800"
                     >
+                      <LogOut className="h-3.5 w-3.5 text-red-500 dark:text-red-400" aria-hidden />
                       Log out
                     </button>
                   </div>

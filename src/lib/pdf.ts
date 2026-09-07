@@ -160,3 +160,18 @@ export function downloadMockInterviewPdf(
 
   w.save(`mock-interview-${setup.role.toLowerCase().replace(/\s+/g, "-")}.pdf`);
 }
+
+export function downloadCoverLetterPdf(letter: string) {
+  const w = new PdfWriter();
+  w.title("Cover Letter");
+  w.subtitle(new Date().toLocaleDateString());
+  w.rule();
+  letter
+    .split(/\n{2,}/)
+    .filter((p) => p.trim())
+    .forEach((paragraph) => {
+      w.body(paragraph.trim());
+      w.spacer(3);
+    });
+  w.save("cover-letter.pdf");
+}
